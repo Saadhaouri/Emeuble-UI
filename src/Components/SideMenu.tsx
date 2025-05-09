@@ -76,11 +76,6 @@ const SideMenu: React.FC = () => {
               link: "/reservations",
             })}
             {renderListItem({
-              IconComponent: PiUsersLight,
-              label: "Clients",
-              link: "/clients",
-            })}
-            {renderListItem({
               IconComponent: MdOutlinePayments,
               label: "Paiements",
               link: "/payments",

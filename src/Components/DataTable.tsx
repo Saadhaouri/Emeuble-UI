@@ -1,4 +1,4 @@
-import { Delete as DeleteIcon, Edit as EditIcon } from "@mui/icons-material";
+import { Delete as DeleteIcon, Edit as EditIcon, Visibility as ViewIcon } from "@mui/icons-material";
 import { Box, IconButton } from "@mui/material";
 import {
   MaterialReactTable,
@@ -11,6 +11,7 @@ interface DataTableProps {
   columns: any[];
   onDelete?: (row: any) => void;
   onUpdate?: (row: any) => void;
+  onView?: (row: any) => void; // New prop for consultation
 }
 
 const DataTable: React.FC<DataTableProps> = ({
@@ -18,12 +19,12 @@ const DataTable: React.FC<DataTableProps> = ({
   columns,
   onDelete,
   onUpdate,
+  onView, // Destructure the new prop
 }) => {
   const [rowSelection, setRowSelection] = useState({});
 
   useEffect(() => {
     // Do something when the row selection changes
-
     setRowSelection;
   }, [rowSelection]);
 
@@ -39,29 +40,55 @@ const DataTable: React.FC<DataTableProps> = ({
     }
   };
 
+  const handleView = (row: any) => {
+    if (onView) {
+      onView(row);
+    }
+  };
+
   const table = useMaterialReactTable({
     columns: columns || [],
     data: data || [],
     enableColumnOrdering: true,
     defaultDisplayColumn: { enableResizing: true },
     enableRowSelection: true,
-    enablePagination: true, // Enable pagination
-    // onPageChange: (page) => console.log(page), // Optional: Handle page change event
-
-    muiTableContainerProps: { sx: { maxHeight: "500px", background: "green" } },
+    enablePagination: true,
+    muiTableContainerProps: { sx: { maxHeight: "500px" } },
     rowVirtualizerOptions: { overscan: 5 },
     columnVirtualizerOptions: { overscan: 2 },
-    enableRowActions: true, // Enable row actions
+    enableRowActions: true,
     renderRowActions: ({ row }) => (
       <Box sx={{ display: "flex", flexWrap: "nowrap", gap: "8px" }}>
-        <IconButton color="secondary" onClick={() => handleUpdate(row)}>
+        <IconButton 
+          color="info" 
+          onClick={() => handleView(row)}
+          title="Consulter"
+          aria-label="Consulter"
+        >
+          <ViewIcon />
+        </IconButton>
+        <IconButton 
+          color="secondary" 
+          onClick={() => handleUpdate(row)}
+          title="Modifier"
+          aria-label="Modifier"
+        >
           <EditIcon />
         </IconButton>
-        <IconButton color="error" onClick={() => handleDelete(row)}>
+        <IconButton 
+          color="error" 
+          onClick={() => handleDelete(row)}
+          title="Supprimer"
+          aria-label="Supprimer"
+        >
           <DeleteIcon />
         </IconButton>
       </Box>
     ),
+    // Optional: Add localization for French
+    localization: {
+      actions: 'Actions',
+    },
   });
 
   return <MaterialReactTable table={table} />;
